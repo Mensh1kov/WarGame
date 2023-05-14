@@ -1,4 +1,6 @@
-package game;
+package game.controllers;
+
+import game.models.GameModel;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

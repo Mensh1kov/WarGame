@@ -1,5 +1,9 @@
 package game;
 
+import game.controllers.GameController;
+import game.models.GameModel;
+import game.views.GameView;
+
 import javax.swing.*;
 import java.awt.*;
 

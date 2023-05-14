@@ -1,4 +1,6 @@
-package game;
+package game.views;
+
+import game.models.components.GameObject;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package game;
+package game.models.components;
 
 import java.awt.Rectangle;
 
