@@ -74,9 +74,5 @@ public class GameController implements PropertyChangeListener
         {
             gameObjectViewMap.remove((GameObject) evt.getOldValue());
         }
-        else if (evt.getPropertyName().equals("update"))
-        {
-            updateView();
-        }
     }
 }

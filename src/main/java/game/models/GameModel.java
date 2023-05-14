@@ -1,9 +1,6 @@
 package game.models;
 
-import game.models.components.Bullet;
-import game.models.components.DynamicObject;
-import game.models.components.GameObject;
-import game.models.components.StaticObject;
+import game.models.components.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -21,6 +18,7 @@ public class GameModel {
     public List<StaticObject> staticObjects = new ArrayList<>();
     public GameModel()
     {
+        // временный способ создания игрока
         this.gameObject = new GameObject(300, 300, 20, 20);
     }
 
@@ -49,20 +47,28 @@ public class GameModel {
         int oldX = object.getX();
         int oldY = object.getY();
         object.move(x, y);
-        if (CollisionHandler.checkCollisionObject(object, objects) != null) object.move(oldX, oldY);
+        GameObject crossedObject = CollisionHandler.checkCollisionObject(object, objects);
+        if (crossedObject != null)
+        {
+            object.move(oldX, oldY);
+            if (crossedObject instanceof Wall && object instanceof Bullet)
+            {
+                removeGameObject(object);
+            }
+        }
     }
 
     public void update()
     {
-        for (DynamicObject object : dynamicObjects)
+        for (DynamicObject object : new ArrayList<>(dynamicObjects))
         {
             moveObject(object, object.getNewX(), object.getNewY());
         }
     }
     public void shoot(double directionX, double directionY)
     {
-        int x = gameObject.getX() + (int) (gameObject.getWidth() * directionX);
-        int y = gameObject.getY() + (int) (gameObject.getHeight() * directionY);
+        int x = gameObject.getX() + (int) ((gameObject.getWidth() + 5) * directionX);
+        int y = gameObject.getY() + (int) ((gameObject.getHeight() + 5) * directionY);
         addGameObject(new Bullet(x, y, 10, 5, directionX, directionY));
     }
 
@@ -81,6 +87,14 @@ public class GameModel {
         if (object instanceof StaticObject) staticObjects.add((StaticObject) object);
         else if (object instanceof DynamicObject) dynamicObjects.add((DynamicObject) object);
         propertyChangeSupport.firePropertyChange("gameObjectAdded", null, object);
+    }
+
+    public void removeGameObject(GameObject object)
+    {
+        objects.remove(object);
+        if (object instanceof DynamicObject) dynamicObjects.remove((DynamicObject) object);
+        else if (object instanceof StaticObject) staticObjects.remove((StaticObject) object);
+        propertyChangeSupport.firePropertyChange("gameObjectRemoved", object, null);
     }
 
     public void startGameLoop()
