@@ -1,21 +1,23 @@
 package game.controllers;
 
 import game.models.GameModel;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class GameKeyAdapter extends KeyAdapter {
+public class GameKeyAdapter extends KeyAdapter
+{
     private GameModel model;
 
-    public GameKeyAdapter(GameModel model) {
+    public GameKeyAdapter(GameModel model)
+    {
         this.model = model;
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
-        super.keyPressed(e);
-        switch (e.getKeyCode()) {
+    public void keyPressed(KeyEvent e)
+    {
+        switch (e.getKeyCode())
+        {
             case KeyEvent.VK_W -> model.movePlayerUp();
             case KeyEvent.VK_A -> model.movePlayerLeft();
             case KeyEvent.VK_S -> model.movePlayerDown();

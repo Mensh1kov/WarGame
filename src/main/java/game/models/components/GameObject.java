@@ -2,42 +2,52 @@ package game.models.components;
 
 import java.awt.Rectangle;
 
-public class GameObject {
+public class GameObject
+{
     private Rectangle hitbox;
 
-    public GameObject(int x, int y, int width, int height) {
+    public GameObject(int x, int y, int width, int height)
+    {
         this.hitbox = new Rectangle(x, y, width, height);
     }
 
-    public Rectangle getHitbox() {
+    public Rectangle getHitbox()
+    {
         return hitbox;
     }
 
-    public void setX(int x) {
+    public void setX(int x)
+    {
         hitbox.x = x;
     }
 
-    public void setY(int y) {
+    public void setY(int y)
+    {
         hitbox.y = y;
     }
 
-    public int getX() {
+    public int getX()
+    {
         return hitbox.x;
     }
 
-    public int getY() {
+    public int getY()
+    {
         return hitbox.y;
     }
 
-    public int getWidth() {
+    public int getWidth()
+    {
         return hitbox.width;
     }
 
-    public int getHeight() {
+    public int getHeight()
+    {
         return hitbox.height;
     }
 
-    public void move(int x, int y) {
+    public void move(int x, int y)
+    {
         setX(x);
         setY(y);
     }
