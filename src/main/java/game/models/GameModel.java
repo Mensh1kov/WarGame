@@ -61,7 +61,11 @@ public class GameModel {
             }
             else if (crossedObject instanceof Bullet && object instanceof Bullet)
             {
-                // пока ничего не делать
+                // ничего не делаем, т.е. пули пролетают друг через друга
+            }
+            else if (object instanceof Bullet || crossedObject instanceof Bullet)
+            {
+                // чтобы пули не застревали в игроке
             }
             else
             {
@@ -88,9 +92,7 @@ public class GameModel {
         double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         double directionX = deltaX / len;
         double directionY = deltaY / len;
-        int x = gameObject.getX() + (int) ((gameObject.getWidth() + 5) * directionX);
-        int y = gameObject.getY() + (int) ((gameObject.getHeight() + 5) * directionY);
-        addGameObject(new Bullet(x, y, 10, 10, directionX, directionY));
+        addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 10, 10, directionX, directionY));
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener)

@@ -10,9 +10,10 @@ public class CollisionHandler
     public static List<GameObject> checkCollisionObject(GameObject suspect, List<GameObject> objects)
     {
         List<GameObject> collisions = new ArrayList<>();
+
         for (GameObject object : objects)
         {
-            // был случай возникновения nullPointerException
+            // каким-то образом в objects попадают null
             if (object != suspect && checkCollision(suspect, object))
                 collisions.add(object);
         }
@@ -21,6 +22,9 @@ public class CollisionHandler
 
     public static boolean checkCollision(GameObject objA, GameObject objB)
     {
-        return objA.getHitbox().intersects(objB.getHitbox());
+        // пришлось добавить проверку на null, из-за проблемы, описанной в checkCollisionObject
+        if (objA != null && objB != null)
+            return objA.getHitbox().intersects(objB.getHitbox());
+        return false;
     }
 }
