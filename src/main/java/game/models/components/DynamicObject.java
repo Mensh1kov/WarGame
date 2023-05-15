@@ -13,7 +13,17 @@ public class DynamicObject extends GameObject {
 
     public void setDirection(double directionX, double directionY)
     {
+        setDirectionX(directionX);
+        setDirectionY(directionY);
+    }
+
+    public void setDirectionX(double directionX)
+    {
         this.directionX = directionX;
+    }
+
+    public void setDirectionY(double directionY)
+    {
         this.directionY = directionY;
     }
 

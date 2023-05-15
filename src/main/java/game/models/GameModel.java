@@ -62,6 +62,10 @@ public class GameModel {
     {
         for (DynamicObject object : new ArrayList<>(dynamicObjects))
         {
+            if (object instanceof Zombie)
+            {
+                ((Zombie) object).setTarget(gameObject.getX(), gameObject.getY());
+            }
             moveObject(object, object.getNewX(), object.getNewY());
         }
     }
