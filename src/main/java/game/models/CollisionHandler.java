@@ -1,18 +1,22 @@
 package game.models;
 
 import game.models.components.GameObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class CollisionHandler
 {
-    public static GameObject checkCollisionObject(GameObject suspect, List<GameObject> objects)
+    public static List<GameObject> checkCollisionObject(GameObject suspect, List<GameObject> objects)
     {
+        List<GameObject> collisions = new ArrayList<>();
         for (GameObject object : objects)
         {
+            // был случай возникновения nullPointerException
             if (object != suspect && checkCollision(suspect, object))
-                return object;
+                collisions.add(object);
         }
-        return null;
+        return collisions;
     }
 
     public static boolean checkCollision(GameObject objA, GameObject objB)

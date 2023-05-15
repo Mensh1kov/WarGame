@@ -24,22 +24,22 @@ public class GameModel {
 
     public void movePlayerLeft()
     {
-        moveObject(gameObject,gameObject.getX() - 5, gameObject.getY());
+        moveObject(gameObject,gameObject.getX() - 3, gameObject.getY());
     }
 
     public void movePlayerRight()
     {
-        moveObject(gameObject,gameObject.getX() + 5, gameObject.getY());
+        moveObject(gameObject,gameObject.getX() + 3, gameObject.getY());
     }
 
     public void movePlayerUp()
     {
-        moveObject(gameObject,gameObject.getX(), gameObject.getY() - 5);
+        moveObject(gameObject,gameObject.getX(), gameObject.getY() - 3);
     }
 
     public void movePlayerDown()
     {
-        moveObject(gameObject,gameObject.getX(), gameObject.getY() + 5);
+        moveObject(gameObject,gameObject.getX(), gameObject.getY() + 3);
     }
 
     private void moveObject(GameObject object, int x, int y)
@@ -47,13 +47,25 @@ public class GameModel {
         int oldX = object.getX();
         int oldY = object.getY();
         object.move(x, y);
-        GameObject crossedObject = CollisionHandler.checkCollisionObject(object, objects);
-        if (crossedObject != null)
+        List<GameObject> collisions = CollisionHandler.checkCollisionObject(object, new ArrayList<>(objects));
+
+        for (GameObject crossedObject : collisions)
         {
-            object.move(oldX, oldY);
             if (crossedObject instanceof Wall && object instanceof Bullet)
             {
                 removeGameObject(object);
+            } else if (crossedObject instanceof Zombie && object instanceof Bullet)
+            {
+                removeGameObject(crossedObject);
+                removeGameObject(object);
+            }
+            else if (crossedObject instanceof Bullet && object instanceof Bullet)
+            {
+                // пока ничего не делать
+            }
+            else
+            {
+                object.move(oldX, oldY);
             }
         }
     }
@@ -69,11 +81,16 @@ public class GameModel {
             moveObject(object, object.getNewX(), object.getNewY());
         }
     }
-    public void shoot(double directionX, double directionY)
+    public void shoot(int targetX, int targetY)
     {
+        double deltaX = targetX - gameObject.getX();
+        double deltaY = targetY - gameObject.getY();
+        double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        double directionX = deltaX / len;
+        double directionY = deltaY / len;
         int x = gameObject.getX() + (int) ((gameObject.getWidth() + 5) * directionX);
         int y = gameObject.getY() + (int) ((gameObject.getHeight() + 5) * directionY);
-        addGameObject(new Bullet(x, y, 10, 5, directionX, directionY));
+        addGameObject(new Bullet(x, y, 10, 10, directionX, directionY));
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener)
@@ -145,5 +162,9 @@ public class GameModel {
         {
             e.printStackTrace();
         }
+    }
+
+    public int getFps() {
+        return fps;
     }
 }

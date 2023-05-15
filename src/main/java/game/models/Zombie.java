@@ -2,7 +2,8 @@ package game.models;
 
 import game.models.components.DynamicObject;
 
-public class Zombie extends DynamicObject {
+public class Zombie extends DynamicObject
+{
     private int targetX;
     private int targetY;
 

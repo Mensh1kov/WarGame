@@ -11,21 +11,27 @@ import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GameController implements PropertyChangeListener
 {
-    private Timer timer;
     private GameModel model;
     private GameView view;
     private Map<GameObject, GameObjectView> gameObjectViewMap;
+    private GameKeyAdapter keyAdapter = new GameKeyAdapter();
+    private GameMouseAdapter mouseAdapter = new GameMouseAdapter();
+    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(1);
 
     public GameController(GameModel model, GameView view)
     {
-        this.gameObjectViewMap = new HashMap<>();
+        this.gameObjectViewMap = new ConcurrentHashMap<>();
         this.model = model;
         this.view = view;
-        timer = new Timer(16, e -> updateView());
 
         setupView();
         setupModel();
@@ -33,15 +39,17 @@ public class GameController implements PropertyChangeListener
 
     public void startGame()
     {
-        timer.start();
+        threadPool.scheduleAtFixedRate(this::updateView, 0, 1000/ model.getFps(), TimeUnit.MILLISECONDS);
+        threadPool.scheduleAtFixedRate(this::updateModel, 0, 1000 / model.getFps(), TimeUnit.MILLISECONDS);
         model.startGameLoop();
     }
 
     public void setupView()
     {
         view.setFocusable(true);
-        view.addKeyListener(new GameKeyAdapter(model));
-        view.addMouseListener(new GameMouseAdapter(model));
+        view.addKeyListener(keyAdapter);
+        view.addMouseListener(mouseAdapter);
+        view.addMouseMotionListener(mouseAdapter);
     }
 
     public void setupModel()
@@ -65,6 +73,15 @@ public class GameController implements PropertyChangeListener
     public void updateView()
     {
         view.printObjectsViews(gameObjectViewMap.values().stream().toList());
+    }
+
+    private void updateModel()
+    {
+        if (keyAdapter.isUpPressed()) model.movePlayerUp();
+        if (keyAdapter.isDownPressed()) model.movePlayerDown();
+        if (keyAdapter.isLeftPressed()) model.movePlayerLeft();
+        if (keyAdapter.isRightPressed()) model.movePlayerRight();
+        if (mouseAdapter.isShootPressed()) model.shoot(mouseAdapter.getX(), mouseAdapter.getY());
     }
 
     @Override
