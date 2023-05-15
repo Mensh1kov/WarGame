@@ -7,11 +7,8 @@ import game.models.components.Wall;
 import game.views.GameObjectView;
 import game.views.GameObjectViewFactory;
 import game.views.GameView;
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -25,7 +22,7 @@ public class GameController implements PropertyChangeListener
     private Map<GameObject, GameObjectView> gameObjectViewMap;
     private GameKeyAdapter keyAdapter = new GameKeyAdapter();
     private GameMouseAdapter mouseAdapter = new GameMouseAdapter();
-    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(3);
 
     public GameController(GameModel model, GameView view)
     {
@@ -39,7 +36,7 @@ public class GameController implements PropertyChangeListener
 
     public void startGame()
     {
-        threadPool.scheduleAtFixedRate(this::updateView, 0, 1000/ model.getFps(), TimeUnit.MILLISECONDS);
+        threadPool.scheduleAtFixedRate(this::updateView, 0, 1000 / model.getFps(), TimeUnit.MILLISECONDS);
         threadPool.scheduleAtFixedRate(this::updateModel, 0, 1000 / model.getFps(), TimeUnit.MILLISECONDS);
         model.startGameLoop();
     }
@@ -87,6 +84,7 @@ public class GameController implements PropertyChangeListener
     @Override
     public void propertyChange(PropertyChangeEvent evt)
     {
+        // TODO в model object удалился, а в gameObjectViewMap он остался (происходит очень редко)
         if (evt.getPropertyName().equals("gameObjectAdded"))
         {
             GameObject newGameObject = (GameObject) evt.getNewValue();

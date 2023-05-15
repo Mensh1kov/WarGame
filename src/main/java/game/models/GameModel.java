@@ -78,6 +78,7 @@ public class GameModel {
     {
         for (DynamicObject object : new ArrayList<>(dynamicObjects))
         {
+            // TODO иногда object равен null
             if (object instanceof Zombie)
             {
                 ((Zombie) object).setTarget(gameObject.getX(), gameObject.getY());
@@ -89,10 +90,13 @@ public class GameModel {
     {
         double deltaX = targetX - gameObject.getX();
         double deltaY = targetY - gameObject.getY();
-        double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        double directionX = deltaX / len;
-        double directionY = deltaY / len;
-        addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 10, 10, directionX, directionY));
+        if (Double.isFinite(deltaX) && deltaX != 0.0 && Double.isFinite(deltaY) && deltaY != 0.0)
+        {
+            double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            double directionX = deltaX / len;
+            double directionY = deltaY / len;
+            addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 10, 10, directionX, directionY));
+        }
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener)
