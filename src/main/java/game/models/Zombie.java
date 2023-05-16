@@ -4,6 +4,7 @@ import game.models.components.DynamicObject;
 
 public class Zombie extends DynamicObject
 {
+    private int hp = 100;
     private int targetX;
     private int targetY;
 
@@ -30,6 +31,20 @@ public class Zombie extends DynamicObject
         updateDirectionY();
     }
 
+    public void hit(int damage)
+    {
+        hp -= damage;
+    }
+
+    public boolean isDead()
+    {
+        return hp <= 0;
+    }
+
+    public int getHp()
+    {
+        return hp;
+    }
     private double getLenVector(double deltaX, double deltaY)
     {
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY);

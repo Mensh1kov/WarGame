@@ -9,7 +9,7 @@ import java.util.List;
 public class GameModel {
     private boolean running;
     private Thread gameLoopThread;
-    private int fps = 60; // Частота обновления в кадрах в секунду
+    private final int FPS = 60; // Частота обновления в кадрах в секунду
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     public GameObject gameObject;
 
@@ -56,7 +56,8 @@ public class GameModel {
                 removeGameObject(object);
             } else if (crossedObject instanceof Zombie && object instanceof Bullet)
             {
-                removeGameObject(crossedObject);
+                ((Zombie) crossedObject).hit(((Bullet) object).getDamage());
+                if (((Zombie) crossedObject).isDead()) removeGameObject(crossedObject);
                 removeGameObject(object);
             }
             else if (crossedObject instanceof Bullet && object instanceof Bullet)
@@ -95,7 +96,7 @@ public class GameModel {
             double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             double directionX = deltaX / len;
             double directionY = deltaY / len;
-            addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 10, 10, directionX, directionY));
+            addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 5, 10, directionX, directionY));
         }
     }
 
@@ -129,7 +130,7 @@ public class GameModel {
         addGameObject(gameObject);
         running = true;
         gameLoopThread = new Thread(() -> {
-            long targetTime = 1000 / fps; // Желаемое время между обновлениями
+            long targetTime = 1000 / FPS; // Желаемое время между обновлениями
 
             while (running)
             {
@@ -171,6 +172,6 @@ public class GameModel {
     }
 
     public int getFps() {
-        return fps;
+        return FPS;
     }
 }

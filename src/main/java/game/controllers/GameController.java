@@ -84,7 +84,6 @@ public class GameController implements PropertyChangeListener
     @Override
     public void propertyChange(PropertyChangeEvent evt)
     {
-        // TODO в model object удалился, а в gameObjectViewMap он остался (происходит очень редко)
         if (evt.getPropertyName().equals("gameObjectAdded"))
         {
             GameObject newGameObject = (GameObject) evt.getNewValue();
@@ -92,6 +91,7 @@ public class GameController implements PropertyChangeListener
         }
         else if (evt.getPropertyName().equals("gameObjectRemoved"))
         {
+            // TODO в model object удалился, а в gameObjectViewMap он остался (происходит очень редко)
             gameObjectViewMap.remove((GameObject) evt.getOldValue());
         }
     }

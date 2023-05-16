@@ -9,4 +9,9 @@ public class Bullet extends DynamicObject
         super(x, y, 5, 5, speed, directionX, directionY);
         this.damage = damage;
     }
+
+    public int getDamage()
+    {
+        return damage;
+    }
 }

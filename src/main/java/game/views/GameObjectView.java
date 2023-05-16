@@ -6,8 +6,8 @@ import java.awt.*;
 
 public class GameObjectView extends JPanel
 {
-    private GameObject object;
-    private Color color;
+    protected GameObject object;
+    protected Color color;
 
     public GameObjectView(GameObject object, Color color)
     {

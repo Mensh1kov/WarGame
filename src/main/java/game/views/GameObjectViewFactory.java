@@ -11,7 +11,7 @@ public class GameObjectViewFactory
         Color color = Color.red;
         if (object instanceof Wall) color = Color.GRAY;
         else if (object instanceof Bullet) color = Color.BLACK;
-        else if (object instanceof Zombie) color = Color.GREEN;
+        else if (object instanceof Zombie) return new ZombieView((Zombie) object, Color.GREEN);
 
         return new GameObjectView(object, color);
     }
