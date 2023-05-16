@@ -13,9 +13,12 @@ public class GameModel {
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     public Player gameObject;
 
-    public List<GameObject> objects = new ArrayList<>();
-    public List<DynamicObject> dynamicObjects = new ArrayList<>();
-    public List<StaticObject> staticObjects = new ArrayList<>();
+    private List<GameObject> objects = new ArrayList<>();
+    private List<DynamicObject> dynamicObjects = new ArrayList<>();
+    private List<StaticObject> staticObjects = new ArrayList<>();
+
+    private List<Zombie> zombies = new ArrayList<>();
+    private List<SpawnerZombies> spawners = new ArrayList<>();
     public GameModel()
     {
         // временный способ создания игрока
@@ -83,6 +86,19 @@ public class GameModel {
 
     public void update()
     {
+        for (SpawnerZombies spawner : spawners)
+        {
+            if (zombies.size() < 5)
+            {
+                Zombie zombie = spawner.getZombie();
+                if (CollisionHandler.checkCollisionObject(zombie, new ArrayList<>(objects)).size() == 0)
+                {
+                    zombie.setTarget(gameObject.getX(), gameObject.getY());
+                    addGameObject(zombie);
+                }
+            }
+        }
+
         for (DynamicObject object : new ArrayList<>(dynamicObjects))
         {
             // TODO иногда object равен null
@@ -102,7 +118,7 @@ public class GameModel {
             double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             double directionX = deltaX / len;
             double directionY = deltaY / len;
-            addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 5, 10, directionX, directionY));
+            addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 1000, 10, directionX, directionY));
         }
     }
 
@@ -120,14 +136,20 @@ public class GameModel {
         objects.add(object);
         if (object instanceof StaticObject) staticObjects.add((StaticObject) object);
         else if (object instanceof DynamicObject) dynamicObjects.add((DynamicObject) object);
+        if (object instanceof Zombie) zombies.add((Zombie) object);
         propertyChangeSupport.firePropertyChange("gameObjectAdded", null, object);
     }
 
+    public void addSpawner(SpawnerZombies spawner)
+    {
+        spawners.add(spawner);
+    }
     public void removeGameObject(GameObject object)
     {
         objects.remove(object);
         if (object instanceof DynamicObject) dynamicObjects.remove((DynamicObject) object);
         else if (object instanceof StaticObject) staticObjects.remove((StaticObject) object);
+        if (object instanceof Zombie) zombies.remove((Zombie) object);
         propertyChangeSupport.firePropertyChange("gameObjectRemoved", object, null);
     }
 

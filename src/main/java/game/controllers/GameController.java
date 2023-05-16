@@ -3,6 +3,7 @@ package game.controllers;
 import game.models.GameModel;
 import game.models.Zombie;
 import game.models.components.GameObject;
+import game.models.components.SpawnerZombies;
 import game.models.components.Wall;
 import game.views.GameObjectView;
 import game.views.GameObjectViewFactory;
@@ -68,6 +69,9 @@ public class GameController implements PropertyChangeListener
         model.addGameObject(new Zombie(150, 150, 40, 40, 500, 2, model.gameObject.getX(), model.gameObject.getY()));
         model.addGameObject(new Zombie(350, 150, 10, 10, 50, 3, model.gameObject.getX(), model.gameObject.getY()));
         model.addGameObject(new Zombie(460, 20, 20, 20, 100, 2, model.gameObject.getX(), model.gameObject.getY()));
+
+        model.addSpawner(new SpawnerZombies(100, 250));
+        model.addSpawner(new SpawnerZombies(400, 250));
 
     }
 
