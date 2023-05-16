@@ -61,10 +61,14 @@ public class GameController implements PropertyChangeListener
         model.addGameObject(new Wall(20, 0, 480, 20));
         model.addGameObject(new Wall(480, 20, 20, 480));
         model.addGameObject(new Wall(20, 480, 460, 20));
+        model.addGameObject(new Wall(80, 80,  340, 20));
+        model.addGameObject(new Wall(80, 380,  340, 20));
 
-        model.addGameObject(new Zombie(50, 50, 20, 20, 2, model.gameObject.getX(), model.gameObject.getY()));
-        model.addGameObject(new Zombie(150, 150, 20, 20, 2, model.gameObject.getX(), model.gameObject.getY()));
-        model.addGameObject(new Zombie(400, 50, 20, 20, 2, model.gameObject.getX(), model.gameObject.getY()));
+        model.addGameObject(new Zombie(20, 20, 20, 20, 100, 2, model.gameObject.getX(), model.gameObject.getY()));
+        model.addGameObject(new Zombie(150, 150, 40, 40, 500, 2, model.gameObject.getX(), model.gameObject.getY()));
+        model.addGameObject(new Zombie(350, 150, 10, 10, 50, 3, model.gameObject.getX(), model.gameObject.getY()));
+        model.addGameObject(new Zombie(460, 20, 20, 20, 100, 2, model.gameObject.getX(), model.gameObject.getY()));
+
     }
 
     public void updateView()

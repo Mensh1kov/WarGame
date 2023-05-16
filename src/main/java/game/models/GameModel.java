@@ -11,7 +11,7 @@ public class GameModel {
     private Thread gameLoopThread;
     private final int FPS = 60; // Частота обновления в кадрах в секунду
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-    public GameObject gameObject;
+    public Player gameObject;
 
     public List<GameObject> objects = new ArrayList<>();
     public List<DynamicObject> dynamicObjects = new ArrayList<>();
@@ -19,7 +19,7 @@ public class GameModel {
     public GameModel()
     {
         // временный способ создания игрока
-        this.gameObject = new GameObject(300, 300, 20, 20);
+        this.gameObject = new Player(300, 300, 10000, 20, 20);
     }
 
     public void movePlayerLeft()
@@ -59,6 +59,12 @@ public class GameModel {
                 ((Zombie) crossedObject).hit(((Bullet) object).getDamage());
                 if (((Zombie) crossedObject).isDead()) removeGameObject(crossedObject);
                 removeGameObject(object);
+            }
+            else if (crossedObject instanceof Player && object instanceof Zombie)
+            {
+                ((Player) crossedObject).hit(1);
+                if (((Player) crossedObject).isDead()) System.out.println("You died!");
+                object.move(oldX, oldY);
             }
             else if (crossedObject instanceof Bullet && object instanceof Bullet)
             {

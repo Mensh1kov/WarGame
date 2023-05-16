@@ -1,11 +1,11 @@
 package game.views;
 
-import game.models.Zombie;
+import game.models.Player;
 import java.awt.*;
 
-public class ZombieView extends GameObjectView
+public class PlayerView extends GameObjectView
 {
-    public ZombieView(Zombie object, Color color)
+    public PlayerView(Player object, Color color)
     {
         super(object, color);
     }
@@ -15,6 +15,6 @@ public class ZombieView extends GameObjectView
     {
         super.paintComponent(g);
         g.setColor(Color.BLACK);
-        g.drawString(Integer.toString(((Zombie) object).getHp()), object.getX(), object.getY());
+        g.drawString(Integer.toString(((Player) object).getHp()), object.getX(), object.getY());
     }
 }

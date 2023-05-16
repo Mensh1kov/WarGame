@@ -4,15 +4,16 @@ import game.models.components.DynamicObject;
 
 public class Zombie extends DynamicObject
 {
-    private int hp = 100;
+    private int hp;
     private int targetX;
     private int targetY;
 
-    public Zombie(int x, int y, int width, int height, int speed, int targetX, int targetY)
+    public Zombie(int x, int y, int width, int height, int hp, int speed, int targetX, int targetY)
     {
         super(x, y, width, height, speed, 0, 0);
         this.targetX = targetX;
         this.targetY = targetY;
+        this.hp = hp;
         updateDirectionX();
         updateDirectionY();
     }
