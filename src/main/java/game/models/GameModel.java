@@ -6,12 +6,14 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameModel {
+public class GameModel
+{
     private boolean running;
     private Thread gameLoopThread;
     private final int FPS = 60; // Частота обновления в кадрах в секунду
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     public Player gameObject;
+    public PlayerControls playerControls = new PlayerControls();
 
     private List<GameObject> objects = new ArrayList<>();
     private List<DynamicObject> dynamicObjects = new ArrayList<>();
@@ -84,9 +86,9 @@ public class GameModel {
             }
         }
     }
-
     public void update()
     {
+        handlePlayers();
         for (SpawnerZombies spawner : spawners)
         {
             if (zombies.size() < 5)
@@ -154,6 +156,11 @@ public class GameModel {
         propertyChangeSupport.firePropertyChange("gameObjectRemoved", object, null);
     }
 
+    public PlayerControls getPlayerControls()
+    {
+        return playerControls;
+    }
+
     public void startGameLoop()
     {
         addGameObject(gameObject);
@@ -202,5 +209,14 @@ public class GameModel {
 
     public int getFps() {
         return FPS;
+    }
+
+    private void handlePlayers()
+    {
+        if (playerControls.isMoveUp()) movePlayerUp();
+        if (playerControls.isMoveDown()) movePlayerDown();
+        if (playerControls.isMoveLeft()) movePlayerLeft();
+        if (playerControls.isMoveRight()) movePlayerRight();
+        if (playerControls.isShoot()) shoot(playerControls.getX(), playerControls.getY());
     }
 }

@@ -1,25 +1,28 @@
 package game.controllers;
 
+import game.models.components.PlayerControls;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class GameKeyAdapter extends KeyAdapter
 {
+    private PlayerControls playerControls;
 
-    private boolean upPressed = false;
-    private boolean downPressed = false;
-    private boolean leftPressed = false;
-    private boolean rightPressed = false;
+    public GameKeyAdapter(PlayerControls playerControls)
+    {
+        this.playerControls = playerControls;
+    }
 
     @Override
     public void keyPressed(KeyEvent e)
     {
         switch (e.getKeyCode())
         {
-            case KeyEvent.VK_W -> upPressed = true;
-            case KeyEvent.VK_A -> leftPressed = true;
-            case KeyEvent.VK_S -> downPressed = true;
-            case KeyEvent.VK_D -> rightPressed = true;
+            case KeyEvent.VK_W -> playerControls.setMoveUp(true);
+            case KeyEvent.VK_A -> playerControls.setMoveLeft(true);
+            case KeyEvent.VK_S -> playerControls.setMoveDown(true);
+            case KeyEvent.VK_D -> playerControls.setMoveRight(true);
         }
     }
 
@@ -28,30 +31,10 @@ public class GameKeyAdapter extends KeyAdapter
     {
         switch (e.getKeyCode())
         {
-            case KeyEvent.VK_W -> upPressed = false;
-            case KeyEvent.VK_A -> leftPressed = false;
-            case KeyEvent.VK_S -> downPressed = false;
-            case KeyEvent.VK_D -> rightPressed = false;
+            case KeyEvent.VK_W -> playerControls.setMoveUp(false);
+            case KeyEvent.VK_A -> playerControls.setMoveLeft(false);
+            case KeyEvent.VK_S -> playerControls.setMoveDown(false);
+            case KeyEvent.VK_D -> playerControls.setMoveRight(false);
         }
-    }
-
-    public boolean isUpPressed()
-    {
-        return upPressed;
-    }
-
-    public boolean isDownPressed()
-    {
-        return downPressed;
-    }
-
-    public boolean isLeftPressed()
-    {
-        return leftPressed;
-    }
-
-    public boolean isRightPressed()
-    {
-        return rightPressed;
     }
 }

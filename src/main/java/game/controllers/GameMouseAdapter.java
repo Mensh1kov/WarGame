@@ -1,19 +1,24 @@
 package game.controllers;
 
+import game.models.components.PlayerControls;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class GameMouseAdapter extends MouseAdapter
 {
-    private boolean shootPressed = false;
-    private int x = 0;
-    private int y = 0;
+    private PlayerControls playerControls;
+
+    public GameMouseAdapter(PlayerControls playerControls)
+    {
+        this.playerControls = playerControls;
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {
         switch (e.getButton())
         {
-            case MouseEvent.BUTTON1 -> shootPressed = true;
+            case MouseEvent.BUTTON1 -> playerControls.setShoot(true);
         }
         setPos(e.getX(), e.getY());
     }
@@ -23,7 +28,7 @@ public class GameMouseAdapter extends MouseAdapter
     {
         switch (e.getButton())
         {
-            case MouseEvent.BUTTON1 -> shootPressed = false;
+            case MouseEvent.BUTTON1 -> playerControls.setShoot(false);
         }
         setPos(e.getX(), e.getY());
     }
@@ -31,29 +36,12 @@ public class GameMouseAdapter extends MouseAdapter
     @Override
     public void mouseDragged(MouseEvent e)
     {
-        if (shootPressed)
-        {
-            setPos(e.getX(), e.getY());
-        }
-    }
-
-    public boolean isShootPressed()
-    {
-        return shootPressed;
+      setPos(e.getX(), e.getY());
     }
 
     public void setPos(int x, int y)
     {
-        this.x = x;
-        this.y = y;
-    }
-    public int getX()
-    {
-        return x;
-    }
-
-    public int getY()
-    {
-        return y;
+        playerControls.setX(x);
+        playerControls.setY(y);
     }
 }

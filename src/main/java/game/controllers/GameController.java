@@ -1,7 +1,7 @@
 package game.controllers;
 
 import game.models.GameModel;
-import game.models.Zombie;
+import game.models.components.Zombie;
 import game.models.components.GameObject;
 import game.models.components.SpawnerZombies;
 import game.models.components.Wall;
@@ -21,8 +21,8 @@ public class GameController implements PropertyChangeListener
     private GameModel model;
     private GameView view;
     private Map<GameObject, GameObjectView> gameObjectViewMap;
-    private GameKeyAdapter keyAdapter = new GameKeyAdapter();
-    private GameMouseAdapter mouseAdapter = new GameMouseAdapter();
+    private GameKeyAdapter keyAdapter;
+    private GameMouseAdapter mouseAdapter;
     private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(3);
 
     public GameController(GameModel model, GameView view)
@@ -30,6 +30,8 @@ public class GameController implements PropertyChangeListener
         this.gameObjectViewMap = new ConcurrentHashMap<>();
         this.model = model;
         this.view = view;
+        this.keyAdapter = new GameKeyAdapter(model.getPlayerControls());
+        this.mouseAdapter = new GameMouseAdapter(model.getPlayerControls());
 
         setupView();
         setupModel();
@@ -38,7 +40,6 @@ public class GameController implements PropertyChangeListener
     public void startGame()
     {
         threadPool.scheduleAtFixedRate(this::updateView, 0, 1000 / model.getFps(), TimeUnit.MILLISECONDS);
-        threadPool.scheduleAtFixedRate(this::updateModel, 0, 1000 / model.getFps(), TimeUnit.MILLISECONDS);
         model.startGameLoop();
     }
 
@@ -77,15 +78,6 @@ public class GameController implements PropertyChangeListener
     public void updateView()
     {
         view.printObjectsViews(gameObjectViewMap.values().stream().toList());
-    }
-
-    private void updateModel()
-    {
-        if (keyAdapter.isUpPressed()) model.movePlayerUp();
-        if (keyAdapter.isDownPressed()) model.movePlayerDown();
-        if (keyAdapter.isLeftPressed()) model.movePlayerLeft();
-        if (keyAdapter.isRightPressed()) model.movePlayerRight();
-        if (mouseAdapter.isShootPressed()) model.shoot(mouseAdapter.getX(), mouseAdapter.getY());
     }
 
     @Override
