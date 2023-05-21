@@ -28,6 +28,4 @@ public class SpawnerZombies
 
         return new Zombie(x, y, size, size, hp, speed, 0, 0);
     }
-
-
 }

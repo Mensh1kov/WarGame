@@ -72,7 +72,6 @@ public class GameController implements PropertyChangeListener
 
         model.addSpawner(new SpawnerZombies(100, 250));
         model.addSpawner(new SpawnerZombies(400, 250));
-
     }
 
     public void updateView()

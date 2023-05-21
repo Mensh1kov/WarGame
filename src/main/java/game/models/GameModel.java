@@ -21,6 +21,7 @@ public class GameModel {
     private List<SpawnerZombies> spawners = new ArrayList<>();
     public GameModel()
     {
+//        zombies.removeIf(zombie -> {zombie.isDead()})
         // временный способ создания игрока
         this.gameObject = new Player(300, 300, 10000, 20, 20);
     }
@@ -118,7 +119,7 @@ public class GameModel {
             double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             double directionX = deltaX / len;
             double directionY = deltaY / len;
-            addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 1000, 10, directionX, directionY));
+            addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 10, 10, directionX, directionY));
         }
     }
 
