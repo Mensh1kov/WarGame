@@ -8,44 +8,45 @@ import java.util.List;
 
 public class GameModel
 {
-    private boolean running;
-    private Thread gameLoopThread;
-    private final int FPS = 60; // Частота обновления в кадрах в секунду
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-    public Player gameObject;
-    public PlayerControls playerControls = new PlayerControls();
+    protected boolean running;
+    protected Thread gameLoopThread;
+    protected final int FPS = 60; // Частота обновления в кадрах в секунду
+    protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    public Player player;
+    protected PlayerControls playerControls = new PlayerControls();
 
-    private List<GameObject> objects = new ArrayList<>();
-    private List<DynamicObject> dynamicObjects = new ArrayList<>();
-    private List<StaticObject> staticObjects = new ArrayList<>();
+    protected List<GameObject> objects = new ArrayList<>();
+    protected List<DynamicObject> dynamicObjects = new ArrayList<>();
+    protected List<StaticObject> staticObjects = new ArrayList<>();
 
-    private List<Zombie> zombies = new ArrayList<>();
-    private List<SpawnerZombies> spawners = new ArrayList<>();
+    protected List<Zombie> zombies = new ArrayList<>();
+    protected List<SpawnerZombies> spawners = new ArrayList<>();
+
     public GameModel()
     {
-//        zombies.removeIf(zombie -> {zombie.isDead()})
+        // zombies.removeIf(zombie -> {zombie.isDead()})
         // временный способ создания игрока
-        this.gameObject = new Player(300, 300, 10000, 20, 20);
+        this.player = getPlayer("Alex");
     }
 
-    public void movePlayerLeft()
+    public void movePlayerLeft(Player player)
     {
-        moveObject(gameObject,gameObject.getX() - 3, gameObject.getY());
+        moveObject(player,player.getX() - 3, player.getY());
     }
 
-    public void movePlayerRight()
+    public void movePlayerRight(Player player)
     {
-        moveObject(gameObject,gameObject.getX() + 3, gameObject.getY());
+        moveObject(player,player.getX() + 3, player.getY());
     }
 
-    public void movePlayerUp()
+    public void movePlayerUp(Player player)
     {
-        moveObject(gameObject,gameObject.getX(), gameObject.getY() - 3);
+        moveObject(player, player.getX(), player.getY() - 3);
     }
 
-    public void movePlayerDown()
+    public void movePlayerDown(Player player)
     {
-        moveObject(gameObject,gameObject.getX(), gameObject.getY() + 3);
+        moveObject(player, player.getX(), player.getY() + 3);
     }
 
     private void moveObject(GameObject object, int x, int y)
@@ -88,7 +89,7 @@ public class GameModel
     }
     public void update()
     {
-        handlePlayers();
+        handlePlayers(playerControls, player);
         for (SpawnerZombies spawner : spawners)
         {
             if (zombies.size() < 5)
@@ -96,7 +97,7 @@ public class GameModel
                 Zombie zombie = spawner.getZombie();
                 if (CollisionHandler.checkCollisionObject(zombie, new ArrayList<>(objects)).size() == 0)
                 {
-                    zombie.setTarget(gameObject.getX(), gameObject.getY());
+                    zombie.setTarget(player.getX(), player.getY());
                     addGameObject(zombie);
                 }
             }
@@ -107,22 +108,27 @@ public class GameModel
             // TODO иногда object равен null
             if (object instanceof Zombie)
             {
-                ((Zombie) object).setTarget(gameObject.getX(), gameObject.getY());
+                ((Zombie) object).setTarget(player.getX(), player.getY());
             }
             moveObject(object, object.getNewX(), object.getNewY());
         }
     }
-    public void shoot(int targetX, int targetY)
+    public void shoot(GameObject object, int targetX, int targetY)
     {
-        double deltaX = targetX - gameObject.getX();
-        double deltaY = targetY - gameObject.getY();
+        double deltaX = targetX - object.getX();
+        double deltaY = targetY - object.getY();
         if (Double.isFinite(deltaX) && deltaX != 0.0 && Double.isFinite(deltaY) && deltaY != 0.0)
         {
             double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             double directionX = deltaX / len;
             double directionY = deltaY / len;
-            addGameObject(new Bullet((int) gameObject.getHitbox().getCenterX(), (int) gameObject.getHitbox().getCenterY(), 10, 10, directionX, directionY));
+            addGameObject(new Bullet(IdGenerator.generateId(), (int) object.getHitbox().getCenterX(), (int) object.getHitbox().getCenterY(), 10, 10, directionX, directionY));
         }
+    }
+
+    protected Player getPlayer(String name)
+    {
+        return new Player(IdGenerator.generateId(), name, 300, 300, 10000, 20, 20);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener)
@@ -153,7 +159,7 @@ public class GameModel
         if (object instanceof DynamicObject) dynamicObjects.remove((DynamicObject) object);
         else if (object instanceof StaticObject) staticObjects.remove((StaticObject) object);
         if (object instanceof Zombie) zombies.remove((Zombie) object);
-        propertyChangeSupport.firePropertyChange("gameObjectRemoved", object, null);
+        propertyChangeSupport.firePropertyChange("gameObjectRemoved", object.getId(), null);
     }
 
     public PlayerControls getPlayerControls()
@@ -163,7 +169,7 @@ public class GameModel
 
     public void startGameLoop()
     {
-        addGameObject(gameObject);
+        addGameObject(player);
         running = true;
         gameLoopThread = new Thread(() -> {
             long targetTime = 1000 / FPS; // Желаемое время между обновлениями
@@ -211,12 +217,12 @@ public class GameModel
         return FPS;
     }
 
-    private void handlePlayers()
+    protected void handlePlayers(PlayerControls playerControls, Player player)
     {
-        if (playerControls.isMoveUp()) movePlayerUp();
-        if (playerControls.isMoveDown()) movePlayerDown();
-        if (playerControls.isMoveLeft()) movePlayerLeft();
-        if (playerControls.isMoveRight()) movePlayerRight();
-        if (playerControls.isShoot()) shoot(playerControls.getX(), playerControls.getY());
+        if (playerControls.isMoveUp()) movePlayerUp(player);
+        if (playerControls.isMoveDown()) movePlayerDown(player);
+        if (playerControls.isMoveLeft()) movePlayerLeft(player);
+        if (playerControls.isMoveRight()) movePlayerRight(player);
+        if (playerControls.isShoot()) shoot(player, playerControls.getX(), playerControls.getY());
     }
 }

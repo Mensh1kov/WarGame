@@ -1,9 +1,11 @@
 package game.models.components;
 
-public class Wall extends StaticObject
+import java.io.Serializable;
+
+public class Wall extends StaticObject implements Serializable
 {
-    public Wall(int x, int y, int width, int height)
+    public Wall(int id, int x, int y, int width, int height)
     {
-        super(x, y, width, height);
+        super(id, x, y, width, height);
     }
 }

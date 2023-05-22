@@ -1,12 +1,14 @@
 package game.models.components;
 
-public class Bullet extends DynamicObject
+import java.io.Serializable;
+
+public class Bullet extends DynamicObject implements Serializable
 {
     private int damage;
 
-    public Bullet(int x, int y, int damage, int speed, double directionX, double directionY)
+    public Bullet(int id, int x, int y, int damage, int speed, double directionX, double directionY)
     {
-        super(x, y, 5, 5, speed, directionX, directionY);
+        super(id, x, y, 5, 5, speed, directionX, directionY);
         this.damage = damage;
     }
 

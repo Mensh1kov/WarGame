@@ -1,20 +1,25 @@
-package game.models;
-
-import game.models.components.GameObject;
+package game.models.components;
 
 public class Player extends GameObject
 {
     private int hp;
+    private String name;
 
-    public Player(int x, int y, int hp, int width, int height)
+    public Player(int id, String name, int x, int y, int hp, int width, int height)
     {
-        super(x, y, width, height);
+        super(id, x, y, width, height);
+        this.name = name;
         this.hp = hp;
     }
 
     public int getHp()
     {
         return hp;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 
     public void hit(int damage)

@@ -1,7 +1,7 @@
 package game.views;
 
-import game.models.Player;
-import game.models.Zombie;
+import game.models.components.Player;
+import game.models.components.Zombie;
 import game.models.components.*;
 import java.awt.*;
 

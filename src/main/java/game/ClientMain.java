@@ -1,20 +1,22 @@
 package game;
 
+import game.controllers.ClientController;
 import game.controllers.GameController;
+import game.models.ClientGameModel;
 import game.models.GameModel;
-import game.models.ServerGameModel;
 import game.views.GameView;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class Main {
+public class ClientMain {
     public static void main(String[] args)
     {
-        GameModel model = new ServerGameModel();
+        ClientGameModel model = new ClientGameModel("Biba");
         GameView view = new GameView();
-        GameController controller = new GameController(model, view);
+        ClientController controller = new ClientController(model, view);
 
-        JFrame frame = new JFrame("My Game");
+        JFrame frame = new JFrame("My Game client");
         frame.setPreferredSize(new Dimension(550, 550));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(view);
@@ -23,4 +25,3 @@ public class Main {
         controller.startGame();
     }
 }
-

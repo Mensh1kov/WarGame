@@ -1,6 +1,6 @@
 package game.views;
 
-import game.models.Zombie;
+import game.models.components.Zombie;
 import java.awt.*;
 
 public class ZombieView extends GameObjectView

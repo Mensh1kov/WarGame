@@ -1,7 +1,5 @@
 package game.models.components;
 
-import game.models.Zombie;
-
 import java.util.List;
 import java.util.Random;
 
@@ -26,6 +24,6 @@ public class SpawnerZombies
         int size = sizes.get(rn.nextInt(sizes.size()));
         int speed = speeds.get(rn.nextInt(speeds.size()));
 
-        return new Zombie(x, y, size, size, hp, speed, 0, 0);
+        return new Zombie(IdGenerator.generateId(), x, y, size, size, hp, speed, 0, 0);
     }
 }

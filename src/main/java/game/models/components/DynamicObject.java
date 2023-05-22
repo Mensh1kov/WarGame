@@ -1,12 +1,15 @@
 package game.models.components;
 
-public class DynamicObject extends GameObject {
+import java.io.Serializable;
+
+public class DynamicObject extends GameObject implements Serializable
+{
     private int speed = 5;
     private double directionX;
     private double directionY;
-    public DynamicObject(int x, int y, int width, int height, int speed, double directionX, double directionY)
+    public DynamicObject(int id, int x, int y, int width, int height, int speed, double directionX, double directionY)
     {
-        super(x, y, width, height);
+        super(id, x, y, width, height);
         setDirection(directionX, directionY);
         setSpeed(speed);
     }

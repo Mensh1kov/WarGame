@@ -1,14 +1,17 @@
 package game.models.components;
 
 import java.awt.Rectangle;
+import java.io.Serializable;
 
-public class GameObject
+public class GameObject implements Serializable
 {
     private Rectangle hitbox;
+    private int id;
 
-    public GameObject(int x, int y, int width, int height)
+    public GameObject(int id, int x, int y, int width, int height)
     {
         this.hitbox = new Rectangle(x, y, width, height);
+        this.id = id;
     }
 
     public Rectangle getHitbox()
@@ -50,5 +53,15 @@ public class GameObject
     {
         setX(x);
         setY(y);
+    }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
     }
 }

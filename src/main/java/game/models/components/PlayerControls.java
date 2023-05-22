@@ -1,6 +1,8 @@
 package game.models.components;
 
-public class PlayerControls
+import java.io.Serializable;
+
+public class PlayerControls implements Serializable
 {
     private boolean moveUp = false;
     private boolean moveDown = false;
