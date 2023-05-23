@@ -53,7 +53,8 @@ public class ServerGameModel extends GameModel
         try {
             return new ObjectInputStream(socket.getInputStream()).readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            disconnect(socket);
+            return null;
         }
     }
 
@@ -62,7 +63,7 @@ public class ServerGameModel extends GameModel
         try {
             new ObjectOutputStream(socket.getOutputStream()).writeObject(obj);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            disconnect(socket);
         }
     }
 
@@ -73,11 +74,21 @@ public class ServerGameModel extends GameModel
         gameState.clearRemove();
     }
 
+    public void disconnect(Socket socket)
+    {
+        removeGameObject(socketPlayerHashMap.remove(socket));
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void processConnectedPlayerInput()
     {
         socketPlayerHashMap.forEach((socket, player) -> {
             PlayerControls controls = (PlayerControls) readObject(socket);
-            handlePlayers(controls, player);
+            if (controls != null) handlePlayers(controls, player);
         });
     }
 

@@ -59,6 +59,7 @@ public class ClientGameModel
         try {
             return new ObjectInputStream(socket.getInputStream()).readObject();
         } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Read exception!");
             throw new RuntimeException(e);
         }
     }
@@ -68,6 +69,7 @@ public class ClientGameModel
         try {
             new ObjectOutputStream(socket.getOutputStream()).writeObject(obj);
         } catch (IOException e) {
+            System.out.println("Write exception!");
             throw new RuntimeException(e);
         }
     }

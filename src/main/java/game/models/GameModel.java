@@ -4,6 +4,7 @@ import game.models.components.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class GameModel
@@ -20,6 +21,7 @@ public class GameModel
     protected List<StaticObject> staticObjects = new ArrayList<>();
 
     protected List<Zombie> zombies = new ArrayList<>();
+    protected List<Player> players = new ArrayList<>();
     protected List<SpawnerZombies> spawners = new ArrayList<>();
 
     public GameModel()
@@ -108,10 +110,26 @@ public class GameModel
             // TODO иногда object равен null
             if (object instanceof Zombie)
             {
-                ((Zombie) object).setTarget(player.getX(), player.getY());
+                Player target = getTargetForZombie(object.getX(), object.getY());
+                ((Zombie) object).setTarget(target.getX(), target.getY());
             }
             moveObject(object, object.getNewX(), object.getNewY());
         }
+    }
+
+
+    // зомби выбирает цель
+    public Player getTargetForZombie(int x, int y)
+    {
+        return players
+                .stream()
+                .min((o1, o2) -> getDistance(o1.getX() - x, o1.getY() - y) - getDistance(o2.getX() - x, o2.getY() - y))
+                .get(); // возможны ошибки
+    }
+
+    public int getDistance(int deltaX, int deltaY)
+    {
+        return (int) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
     public void shoot(GameObject object, int targetX, int targetY)
     {
@@ -146,6 +164,7 @@ public class GameModel
         if (object instanceof StaticObject) staticObjects.add((StaticObject) object);
         else if (object instanceof DynamicObject) dynamicObjects.add((DynamicObject) object);
         if (object instanceof Zombie) zombies.add((Zombie) object);
+        if (object instanceof Player) players.add((Player) object);
         propertyChangeSupport.firePropertyChange("gameObjectAdded", null, object);
     }
 
@@ -159,6 +178,7 @@ public class GameModel
         if (object instanceof DynamicObject) dynamicObjects.remove((DynamicObject) object);
         else if (object instanceof StaticObject) staticObjects.remove((StaticObject) object);
         if (object instanceof Zombie) zombies.remove((Zombie) object);
+        if (object instanceof Player) players.remove((Player) object);
         propertyChangeSupport.firePropertyChange("gameObjectRemoved", object.getId(), null);
     }
 
@@ -213,7 +233,8 @@ public class GameModel
         }
     }
 
-    public int getFps() {
+    public int getFps()
+    {
         return FPS;
     }
 

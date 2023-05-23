@@ -13,7 +13,7 @@ public class ClientMain2 {
         GameView view = new GameView();
         ClientController controller = new ClientController(model, view);
 
-        JFrame frame = new JFrame("My Game client");
+        JFrame frame = new JFrame("My Game client 2");
         frame.setPreferredSize(new Dimension(550, 550));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(view);
