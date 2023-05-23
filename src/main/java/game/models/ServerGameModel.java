@@ -3,12 +3,15 @@ package game.models;
 import game.models.components.GameObject;
 import game.models.components.Player;
 import game.models.components.PlayerControls;
+
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,9 +28,10 @@ public class ServerGameModel extends GameModel
     private void startServer()
     {
         try {
-            serverSocket = new ServerSocket(PORT);
+            Properties props = new Properties();
+            props.load(new FileInputStream("src/main/resources/config_server.properties"));
+            serverSocket = new ServerSocket(Integer.parseInt(props.getProperty("port")));
             threadPool.submit(this::processConnection);
-            System.out.println("Server started!");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

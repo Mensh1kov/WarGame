@@ -4,10 +4,9 @@ import game.models.components.*;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.util.Properties;
 
 public class ClientGameModel
 {
@@ -29,7 +28,9 @@ public class ClientGameModel
     {
         try {
             // Установка соединения с сервером на localhost:8888
-            socket = new Socket("localhost", 8888);
+            Properties props = new Properties();
+            props.load(new FileInputStream("src/main/resources/config_client.properties"));
+            socket = new Socket(props.getProperty("ip"), Integer.parseInt(props.getProperty("port")));
             new ObjectOutputStream(socket.getOutputStream()).writeObject(name);
         } catch (IOException e) {
             e.printStackTrace();

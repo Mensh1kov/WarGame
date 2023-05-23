@@ -1,2 +1,4 @@
 /target/
 /.idea/
+/src/main/resources/config_client.properties
+/src/main/resources/config_server.properties
