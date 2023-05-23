@@ -69,6 +69,14 @@ public class GameModel
                 if (((Zombie) crossedObject).isDead()) removeGameObject(crossedObject);
                 removeGameObject(object);
             }
+            else if (crossedObject instanceof Player && object instanceof Bullet)
+            {
+                if (crossedObject.getId() != ((Bullet) object).getSenderId())
+                {
+                    ((Player) crossedObject).hit(((Bullet) object).getDamage());
+                    removeGameObject(object);
+                }
+            }
             else if (crossedObject instanceof Player && object instanceof Zombie)
             {
                 ((Player) crossedObject).hit(1);
@@ -140,7 +148,7 @@ public class GameModel
             double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             double directionX = deltaX / len;
             double directionY = deltaY / len;
-            addGameObject(new Bullet(IdGenerator.generateId(), (int) object.getHitbox().getCenterX(), (int) object.getHitbox().getCenterY(), 10, 10, directionX, directionY));
+            addGameObject(new Bullet(IdGenerator.generateId(), object.getId(), (int) object.getHitbox().getCenterX(), (int) object.getHitbox().getCenterY(), 10, 10, directionX, directionY));
         }
     }
 
