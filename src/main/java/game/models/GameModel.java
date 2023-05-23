@@ -4,7 +4,6 @@ import game.models.components.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class GameModel
@@ -74,22 +73,30 @@ public class GameModel
                 if (crossedObject.getId() != ((Bullet) object).getSenderId())
                 {
                     ((Player) crossedObject).hit(((Bullet) object).getDamage());
+                    if (((Player) crossedObject).isDead())
+                    {
+                        System.out.println("%s died!".formatted(((Player) crossedObject).getName()));
+                        ((Player) crossedObject).setHp(1000);
+                    }
                     removeGameObject(object);
                 }
             }
             else if (crossedObject instanceof Player && object instanceof Zombie)
             {
                 ((Player) crossedObject).hit(1);
-                if (((Player) crossedObject).isDead()) System.out.println("You died!");
+                if (((Player) crossedObject).isDead())
+                {
+                    System.out.println("%s died!".formatted(((Player) crossedObject).getName()));
+                    ((Player) crossedObject).setHp(1000);
+                }
                 object.move(oldX, oldY);
             }
             else if (crossedObject instanceof Bullet && object instanceof Bullet)
             {
                 // ничего не делаем, т.е. пули пролетают друг через друга
-            }
-            else if (object instanceof Bullet || crossedObject instanceof Bullet)
+            } else if (crossedObject instanceof Player && object instanceof Player)
             {
-                // чтобы пули не застревали в игроке
+
             }
             else
             {
@@ -154,7 +161,7 @@ public class GameModel
 
     protected Player getPlayer(String name)
     {
-        return new Player(IdGenerator.generateId(), name, 300, 300, 10000, 20, 20);
+        return new Player(IdGenerator.generateId(), name, 300, 300, 1000, 20, 20);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener)

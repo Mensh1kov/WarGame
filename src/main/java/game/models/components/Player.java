@@ -27,6 +27,11 @@ public class Player extends GameObject
         hp -= damage;
     }
 
+    public void setHp(int hp)
+    {
+        this.hp = hp;
+    }
+
     public boolean isDead()
     {
         return hp <= 0;

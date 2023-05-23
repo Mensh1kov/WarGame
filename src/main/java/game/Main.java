@@ -14,7 +14,7 @@ public class Main {
         GameView view = new GameView();
         GameController controller = new GameController(model, view);
 
-        JFrame frame = new JFrame("My Game");
+        JFrame frame = new JFrame("War Game Server");
         frame.setPreferredSize(new Dimension(550, 550));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(view);
