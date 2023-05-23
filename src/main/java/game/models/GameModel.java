@@ -82,6 +82,10 @@ public class GameModel
                     removeGameObject(object);
                 }
             }
+            else if (crossedObject instanceof Bullet && object instanceof Player)
+            {
+
+            }
             else if (crossedObject instanceof Bullet && object instanceof Zombie)
             {
 
