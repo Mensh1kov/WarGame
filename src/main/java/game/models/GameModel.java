@@ -62,7 +62,8 @@ public class GameModel
             if (crossedObject instanceof Wall && object instanceof Bullet)
             {
                 removeGameObject(object);
-            } else if (crossedObject instanceof Zombie && object instanceof Bullet)
+            }
+            else if (crossedObject instanceof Zombie && object instanceof Bullet)
             {
                 ((Zombie) crossedObject).hit(((Bullet) object).getDamage());
                 if (((Zombie) crossedObject).isDead()) removeGameObject(crossedObject);
@@ -81,6 +82,10 @@ public class GameModel
                     removeGameObject(object);
                 }
             }
+            else if (crossedObject instanceof Bullet && object instanceof Zombie)
+            {
+
+            }
             else if (crossedObject instanceof Player && object instanceof Zombie)
             {
                 ((Player) crossedObject).hit(1);
@@ -94,7 +99,8 @@ public class GameModel
             else if (crossedObject instanceof Bullet && object instanceof Bullet)
             {
                 // ничего не делаем, т.е. пули пролетают друг через друга
-            } else if (crossedObject instanceof Player && object instanceof Player)
+            }
+            else if (crossedObject instanceof Player && object instanceof Player)
             {
 
             }
