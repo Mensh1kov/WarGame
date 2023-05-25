@@ -5,7 +5,7 @@ public class Player extends GameObject
     private int hp;
     private String name;
 
-    public Player(int id, String name, int x, int y, int hp, int width, int height)
+    public Player(long id, String name, int x, int y, int hp, int width, int height)
     {
         super(id, x, y, width, height);
         this.name = name;

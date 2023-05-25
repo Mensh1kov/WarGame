@@ -1,7 +1,6 @@
 package game.controllers;
 
 import game.models.ClientGameModel;
-import game.models.GameModel;
 import game.models.components.*;
 import game.views.GameObjectView;
 import game.views.GameObjectViewFactory;
@@ -18,7 +17,7 @@ public class ClientController implements PropertyChangeListener
 {
     private ClientGameModel model;
     private GameView view;
-    private Map<Integer, GameObjectView> gameObjectViewMap;
+    private Map<Long, GameObjectView> gameObjectViewMap;
     private GameKeyAdapter keyAdapter;
     private GameMouseAdapter mouseAdapter;
     private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(3);
@@ -69,7 +68,7 @@ public class ClientController implements PropertyChangeListener
         }
         else if (evt.getPropertyName().equals("gameObjectRemoved"))
         {
-            gameObjectViewMap.remove((int) evt.getOldValue());
+            gameObjectViewMap.remove((long) evt.getOldValue());
         }
     }
 }

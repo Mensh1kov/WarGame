@@ -51,7 +51,7 @@ public class ClientGameModel
         propertyChangeSupport.firePropertyChange("gameObjectAdded", null, object);
     }
 
-    public void removeGameObject(int id)
+    public void removeGameObject(long id)
     {
         propertyChangeSupport.firePropertyChange("gameObjectRemoved", id, null);
     }

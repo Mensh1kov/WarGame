@@ -6,9 +6,9 @@ import java.io.Serializable;
 public class GameObject implements Serializable
 {
     private Rectangle hitbox;
-    private int id;
+    private long id;
 
-    public GameObject(int id, int x, int y, int width, int height)
+    public GameObject(long id, int x, int y, int width, int height)
     {
         this.hitbox = new Rectangle(x, y, width, height);
         this.id = id;
@@ -55,12 +55,12 @@ public class GameObject implements Serializable
         setY(y);
     }
 
-    public int getId()
+    public long getId()
     {
         return id;
     }
 
-    public void setId(int id)
+    public void setId(long id)
     {
         this.id = id;
     }

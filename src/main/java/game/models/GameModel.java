@@ -8,27 +8,14 @@ import java.util.List;
 
 public class GameModel
 {
+    private final String SAVE_FILE_PATH = "src/main/resources/game_save.dat";
     protected boolean running;
     protected Thread gameLoopThread;
     protected final int FPS = 60; // Частота обновления в кадрах в секунду
     protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-    public Player player;
     protected PlayerControls playerControls = new PlayerControls();
+    protected GameManager manager;
 
-    protected List<GameObject> objects = new ArrayList<>();
-    protected List<DynamicObject> dynamicObjects = new ArrayList<>();
-    protected List<StaticObject> staticObjects = new ArrayList<>();
-
-    protected List<Zombie> zombies = new ArrayList<>();
-    protected List<Player> players = new ArrayList<>();
-    protected List<SpawnerZombies> spawners = new ArrayList<>();
-
-    public GameModel()
-    {
-        // zombies.removeIf(zombie -> {zombie.isDead()})
-        // временный способ создания игрока
-        this.player = getPlayer("Alex");
-    }
 
     public void movePlayerLeft(Player player)
     {
@@ -55,7 +42,7 @@ public class GameModel
         int oldX = object.getX();
         int oldY = object.getY();
         object.move(x, y);
-        List<GameObject> collisions = CollisionHandler.checkCollisionObject(object, new ArrayList<>(objects));
+        List<GameObject> collisions = CollisionHandler.checkCollisionObject(object, new ArrayList<>(manager.getObjects()));
 
         for (GameObject crossedObject : collisions)
         {
@@ -116,13 +103,14 @@ public class GameModel
     }
     public void update()
     {
+        Player player = manager.getPlayer();
         handlePlayers(playerControls, player);
-        for (SpawnerZombies spawner : spawners)
+        for (SpawnerZombies spawner : manager.getSpawners())
         {
-            if (zombies.size() < 5)
+            if (manager.getZombies().size() < 5)
             {
                 Zombie zombie = spawner.getZombie();
-                if (CollisionHandler.checkCollisionObject(zombie, new ArrayList<>(objects)).size() == 0)
+                if (CollisionHandler.checkCollisionObject(zombie, manager.getObjects()).size() == 0)
                 {
                     zombie.setTarget(player.getX(), player.getY());
                     addGameObject(zombie);
@@ -130,7 +118,7 @@ public class GameModel
             }
         }
 
-        for (DynamicObject object : new ArrayList<>(dynamicObjects))
+        for (DynamicObject object : manager.getDynamicObjects())
         {
             // TODO иногда object равен null
             if (object instanceof Zombie)
@@ -146,7 +134,7 @@ public class GameModel
     // зомби выбирает цель
     public Player getTargetForZombie(int x, int y)
     {
-        return players
+        return manager.getPlayers()
                 .stream()
                 .min((o1, o2) -> getDistance(o1.getX() - x, o1.getY() - y) - getDistance(o2.getX() - x, o2.getY() - y))
                 .get(); // возможны ошибки
@@ -165,13 +153,23 @@ public class GameModel
             double len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             double directionX = deltaX / len;
             double directionY = deltaY / len;
-            addGameObject(new Bullet(IdGenerator.generateId(), object.getId(), (int) object.getHitbox().getCenterX(), (int) object.getHitbox().getCenterY(), 10, 10, directionX, directionY));
+            addGameObject(new Bullet(manager.getIdGenerator().generateId(), object.getId(), (int) object.getHitbox().getCenterX(), (int) object.getHitbox().getCenterY(), 10, 10, directionX, directionY));
         }
     }
 
-    protected Player getPlayer(String name)
+    protected Player getNewPlayer(String name, IdGenerator generator)
     {
-        return new Player(IdGenerator.generateId(), name, 300, 300, 1000, 20, 20);
+        return new Player(generator.generateId(), name, 300, 300, 1000, 20, 20);
+    }
+
+    public Player getPlayer()
+    {
+        return manager.getPlayer();
+    }
+
+    public int getFps()
+    {
+        return FPS;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener)
@@ -185,25 +183,17 @@ public class GameModel
     }
     public void addGameObject(GameObject object)
     {
-        objects.add(object);
-        if (object instanceof StaticObject) staticObjects.add((StaticObject) object);
-        else if (object instanceof DynamicObject) dynamicObjects.add((DynamicObject) object);
-        if (object instanceof Zombie) zombies.add((Zombie) object);
-        if (object instanceof Player) players.add((Player) object);
+        manager.addGameObject(object);
         propertyChangeSupport.firePropertyChange("gameObjectAdded", null, object);
     }
 
     public void addSpawner(SpawnerZombies spawner)
     {
-        spawners.add(spawner);
+        manager.addSpawner(spawner);
     }
     public void removeGameObject(GameObject object)
     {
-        objects.remove(object);
-        if (object instanceof DynamicObject) dynamicObjects.remove((DynamicObject) object);
-        else if (object instanceof StaticObject) staticObjects.remove((StaticObject) object);
-        if (object instanceof Zombie) zombies.remove((Zombie) object);
-        if (object instanceof Player) players.remove((Player) object);
+        manager.removeGameObject(object);
         propertyChangeSupport.firePropertyChange("gameObjectRemoved", object.getId(), null);
     }
 
@@ -212,9 +202,49 @@ public class GameModel
         return playerControls;
     }
 
-    public void startGameLoop()
+    public void startGame()
     {
-        addGameObject(player);
+        loadGame();
+        startGameLoop();
+    }
+
+    public void stopGame()
+    {
+        saveGame();
+        stopGameLoop();
+    }
+
+    protected void handlePlayers(PlayerControls playerControls, Player player)
+    {
+        if (playerControls.isMoveUp()) movePlayerUp(player);
+        if (playerControls.isMoveDown()) movePlayerDown(player);
+        if (playerControls.isMoveLeft()) movePlayerLeft(player);
+        if (playerControls.isMoveRight()) movePlayerRight(player);
+        if (playerControls.isShoot()) shoot(player, playerControls.getX(), playerControls.getY());
+    }
+
+    protected void loadNewGame()
+    {
+        IdGenerator generator = new IdGenerator();
+        Player player = getNewPlayer("Alex", generator);
+        propertyChangeSupport.firePropertyChange("gameObjectAdded", null, player);
+        manager = new GameManager(player, generator);
+        setupGameWorld();
+    }
+    private void loadGame()
+    {
+        manager = GameSerializer.loadGame(SAVE_FILE_PATH);
+        if (manager == null) loadNewGame();
+        else manager.getObjects().forEach(obj -> propertyChangeSupport.firePropertyChange("gameObjectAdded", null, obj));
+    }
+
+    private void saveGame()
+    {
+        GameSerializer.saveGame(manager, SAVE_FILE_PATH);
+    }
+
+    protected void startGameLoop()
+    {
         running = true;
         gameLoopThread = new Thread(() -> {
             long targetTime = 1000 / FPS; // Желаемое время между обновлениями
@@ -230,12 +260,9 @@ public class GameModel
 
                 if (sleepTime > 0)
                 {
-                    try
-                    {
+                    try {
                         Thread.sleep(sleepTime); // Ожидание до следующего обновления
-                    }
-                    catch (InterruptedException e)
-                    {
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -244,31 +271,35 @@ public class GameModel
         gameLoopThread.start();
     }
 
-    public void stopGameLoop()
+    private void stopGameLoop()
     {
         running = false;
 
-        try
-        {
+        try {
             gameLoopThread.join(); // Ожидание завершения потока игрового цикла
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public int getFps()
+    private void setupGameWorld()
     {
-        return FPS;
+        Player player = getPlayer();
+        IdGenerator generator = manager.getIdGenerator();
+        addGameObject(new Wall(generator.generateId(),0, 0, 20, 500));
+        addGameObject(new Wall(generator.generateId(),20, 0, 480, 20));
+        addGameObject(new Wall(generator.generateId(), 480, 20, 20, 480));
+        addGameObject(new Wall(generator.generateId(), 20, 480, 460, 20));
+        addGameObject(new Wall(generator.generateId(), 80, 80,  340, 20));
+        addGameObject(new Wall(generator.generateId(), 80, 380,  340, 20));
+
+        addGameObject(new Zombie(generator.generateId(), 20, 20, 20, 20, 100, 2, player.getX(), player.getY()));
+        addGameObject(new Zombie(generator.generateId(), 150, 150, 40, 40, 500, 2, player.getX(), player.getY()));
+        addGameObject(new Zombie(generator.generateId(), 350, 150, 10, 10, 50, 3, player.getX(), player.getY()));
+        addGameObject(new Zombie(generator.generateId(), 460, 20, 20, 20, 100, 2, player.getX(), player.getY()));
+
+        addSpawner(new SpawnerZombies(100, 250, generator));
+        addSpawner(new SpawnerZombies(400, 250, generator));
     }
 
-    protected void handlePlayers(PlayerControls playerControls, Player player)
-    {
-        if (playerControls.isMoveUp()) movePlayerUp(player);
-        if (playerControls.isMoveDown()) movePlayerDown(player);
-        if (playerControls.isMoveLeft()) movePlayerLeft(player);
-        if (playerControls.isMoveRight()) movePlayerRight(player);
-        if (playerControls.isShoot()) shoot(player, playerControls.getX(), playerControls.getY());
-    }
 }

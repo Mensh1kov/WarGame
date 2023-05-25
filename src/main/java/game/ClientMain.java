@@ -1,9 +1,7 @@
 package game;
 
 import game.controllers.ClientController;
-import game.controllers.GameController;
 import game.models.ClientGameModel;
-import game.models.GameModel;
 import game.views.GameView;
 
 import javax.swing.*;

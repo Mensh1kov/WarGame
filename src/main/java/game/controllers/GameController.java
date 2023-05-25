@@ -17,7 +17,7 @@ public class GameController implements PropertyChangeListener
 {
     private GameModel model;
     private GameView view;
-    private Map<Integer, GameObjectView> gameObjectViewMap;
+    private Map<Long, GameObjectView> gameObjectViewMap;
     private GameKeyAdapter keyAdapter;
     private GameMouseAdapter mouseAdapter;
     private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(3);
@@ -37,7 +37,12 @@ public class GameController implements PropertyChangeListener
     public void startGame()
     {
         threadPool.scheduleAtFixedRate(this::updateView, 0, 1000 / model.getFps(), TimeUnit.MILLISECONDS);
-        model.startGameLoop();
+        model.startGame();
+    }
+
+    public void stopGame()
+    {
+        model.stopGame();
     }
 
     public void setupView()
@@ -51,25 +56,6 @@ public class GameController implements PropertyChangeListener
     public void setupModel()
     {
         model.addPropertyChangeListener(this);
-        setupGameWorld();
-    }
-
-    public void setupGameWorld()
-    {
-        model.addGameObject(new Wall(IdGenerator.generateId(),0, 0, 20, 500));
-        model.addGameObject(new Wall(IdGenerator.generateId(),20, 0, 480, 20));
-        model.addGameObject(new Wall(IdGenerator.generateId(), 480, 20, 20, 480));
-        model.addGameObject(new Wall(IdGenerator.generateId(), 20, 480, 460, 20));
-        model.addGameObject(new Wall(IdGenerator.generateId(), 80, 80,  340, 20));
-        model.addGameObject(new Wall(IdGenerator.generateId(), 80, 380,  340, 20));
-
-        model.addGameObject(new Zombie(IdGenerator.generateId(), 20, 20, 20, 20, 100, 2, model.player.getX(), model.player.getY()));
-        model.addGameObject(new Zombie(IdGenerator.generateId(), 150, 150, 40, 40, 500, 2, model.player.getX(), model.player.getY()));
-        model.addGameObject(new Zombie(IdGenerator.generateId(), 350, 150, 10, 10, 50, 3, model.player.getX(), model.player.getY()));
-        model.addGameObject(new Zombie(IdGenerator.generateId(), 460, 20, 20, 20, 100, 2, model.player.getX(), model.player.getY()));
-
-        model.addSpawner(new SpawnerZombies(100, 250));
-        model.addSpawner(new SpawnerZombies(400, 250));
     }
 
     public void updateView()
@@ -88,7 +74,7 @@ public class GameController implements PropertyChangeListener
         else if (evt.getPropertyName().equals("gameObjectRemoved"))
         {
             // TODO в model object удалился, а в gameObjectViewMap он остался (происходит очень редко)
-            gameObjectViewMap.remove((int) evt.getOldValue());
+            gameObjectViewMap.remove((long) evt.getOldValue());
         }
     }
 }

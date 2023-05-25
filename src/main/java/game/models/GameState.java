@@ -9,7 +9,7 @@ import java.util.List;
 public class GameState implements Serializable
 {
     private List<GameObject> objects = new ArrayList<>();
-    private List<Integer> remove = new ArrayList<>();
+    private List<Long> remove = new ArrayList<>();
 
     public List<GameObject> getObjects() {
         return objects;
@@ -19,15 +19,15 @@ public class GameState implements Serializable
         this.objects = objects;
     }
 
-    public List<Integer> getRemove() {
+    public List<Long> getRemove() {
         return remove;
     }
 
-    public void setRemove(List<Integer> remove) {
+    public void setRemove(List<Long> remove) {
         this.remove = remove;
     }
 
-    public void addRemove(int id)
+    public void addRemove(long id)
     {
         remove.add(id);
     }

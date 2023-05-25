@@ -1,8 +1,6 @@
 package game.models;
 
-import game.models.components.GameObject;
-import game.models.components.Player;
-import game.models.components.PlayerControls;
+import game.models.components.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -43,7 +40,7 @@ public class ServerGameModel extends GameModel
             try {
                 Socket socket = serverSocket.accept();
                 String name = (String) readObject(socket);
-                Player player = getPlayer(name);
+                Player player = getNewPlayer(name, manager.getIdGenerator());
                 socketPlayerHashMap.put(socket, player);
                 addGameObject(player);
             } catch (IOException e) {
@@ -73,7 +70,7 @@ public class ServerGameModel extends GameModel
 
     public void synchronization()
     {
-        gameState.setObjects(objects);
+        gameState.setObjects(manager.getObjects());
         socketPlayerHashMap.keySet().forEach(socket -> writeObject(socket, gameState));
         gameState.clearRemove();
     }
@@ -97,15 +94,28 @@ public class ServerGameModel extends GameModel
     }
 
     @Override
-    public void removeGameObject(GameObject object) {
+    public void removeGameObject(GameObject object)
+    {
         super.removeGameObject(object);
         gameState.addRemove(object.getId());
     }
 
     @Override
+    public void startGame()
+    {
+        loadNewGame();
+        startGameLoop();
+    }
+
+    @Override
+    public void stopGame()
+    {
+        super.startGameLoop();
+    }
+
+    @Override
     public void startGameLoop()
     {
-        addGameObject(player);
         running = true;
         gameLoopThread = new Thread(() -> {
             long targetTime = 1000 / FPS; // Желаемое время между обновлениями

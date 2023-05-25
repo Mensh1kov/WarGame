@@ -1,12 +1,13 @@
 package game.models.components;
 
-public class IdGenerator
-{
-    private static int nextId = 1;
+import java.io.Serializable;
 
-    public static int generateId()
+public class IdGenerator implements Serializable
+{
+    private long nextId = 1;
+    public long generateId()
     {
-        int id = nextId;
+        long id = nextId;
         nextId++;
         return id;
     }
