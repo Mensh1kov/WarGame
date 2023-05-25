@@ -13,7 +13,6 @@ public class GameModel
     private final String SAVE_FILE_PATH = "src/main/resources/game_save.dat";
     protected final ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() - 1);
     protected boolean running;
-    protected Thread gameLoopThread;
     protected final int FPS = 60; // Частота обновления в кадрах в секунду
     protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     protected PlayerControls playerControls = new PlayerControls();
@@ -53,11 +52,19 @@ public class GameModel
             {
                 removeGameObject(object);
             }
+            else if (crossedObject instanceof Wall)
+            {
+                object.move(oldX, oldY);
+            }
             else if (crossedObject instanceof Zombie && object instanceof Bullet)
             {
                 ((Zombie) crossedObject).hit(((Bullet) object).getDamage());
                 if (((Zombie) crossedObject).isDead()) removeGameObject(crossedObject);
                 removeGameObject(object);
+            }
+            else if (crossedObject instanceof Zombie && object instanceof Zombie)
+            {
+                object.move(oldX, oldY);
             }
             else if (crossedObject instanceof Player && object instanceof Bullet)
             {
@@ -72,14 +79,6 @@ public class GameModel
                     removeGameObject(object);
                 }
             }
-            else if (crossedObject instanceof Bullet && object instanceof Player)
-            {
-
-            }
-            else if (crossedObject instanceof Bullet && object instanceof Zombie)
-            {
-
-            }
             else if (crossedObject instanceof Player && object instanceof Zombie)
             {
                 ((Player) crossedObject).hit(1);
@@ -88,18 +87,6 @@ public class GameModel
                     System.out.println("%s died!".formatted(((Player) crossedObject).getName()));
                     ((Player) crossedObject).setHp(1000);
                 }
-                object.move(oldX, oldY);
-            }
-            else if (crossedObject instanceof Bullet && object instanceof Bullet)
-            {
-                // ничего не делаем, т.е. пули пролетают друг через друга
-            }
-            else if (crossedObject instanceof Player && object instanceof Player)
-            {
-
-            }
-            else
-            {
                 object.move(oldX, oldY);
             }
         }
