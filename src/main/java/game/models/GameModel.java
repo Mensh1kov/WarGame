@@ -5,10 +5,13 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class GameModel
 {
     private final String SAVE_FILE_PATH = "src/main/resources/game_save.dat";
+    protected final ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() - 1);
     protected boolean running;
     protected Thread gameLoopThread;
     protected final int FPS = 60; // Частота обновления в кадрах в секунду
@@ -246,7 +249,7 @@ public class GameModel
     protected void startGameLoop()
     {
         running = true;
-        gameLoopThread = new Thread(() -> {
+        threadPool.submit(() -> {
             long targetTime = 1000 / FPS; // Желаемое время между обновлениями
 
             while (running)
@@ -268,18 +271,11 @@ public class GameModel
                 }
             }
         });
-        gameLoopThread.start();
     }
 
-    private void stopGameLoop()
+    protected void stopGameLoop()
     {
         running = false;
-
-        try {
-            gameLoopThread.join(); // Ожидание завершения потока игрового цикла
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private void setupGameWorld()

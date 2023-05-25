@@ -10,12 +10,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class ServerGameModel extends GameModel
 {
-    private final ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(3);
     private final int PORT = 8888;
     private ServerSocket serverSocket;
     private final ConcurrentHashMap<Socket, Player> socketPlayerHashMap = new ConcurrentHashMap<>();
@@ -110,14 +107,14 @@ public class ServerGameModel extends GameModel
     @Override
     public void stopGame()
     {
-        super.startGameLoop();
+        super.stopGameLoop();
     }
 
     @Override
     public void startGameLoop()
     {
         running = true;
-        gameLoopThread = new Thread(() -> {
+        threadPool.submit(() -> {
             long targetTime = 1000 / FPS; // Желаемое время между обновлениями
 
             while (running)
@@ -144,7 +141,6 @@ public class ServerGameModel extends GameModel
                 }
             }
         });
-        gameLoopThread.start();
         startServer();
     }
 }
